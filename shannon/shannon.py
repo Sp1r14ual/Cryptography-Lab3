@@ -44,40 +44,40 @@ def generate_shannon_codes(alphabet, p):
     return codes
 
 
-def calculate_average_code_length(codes):
-    sum_lengths = sum(len(code[1]) for code in codes)
-    n = len(codes)
-    return sum_lengths / n
+# def calculate_average_code_length(codes):
+#     sum_lengths = sum(len(code[1]) for code in codes)
+#     n = len(codes)
+#     return sum_lengths / n
 
 
-def entropy(assembly):
-    entropy_val = 0
-    for el in assembly:
-        entropy_val += el[1] * math.log2(el[1])
+# def entropy(assembly):
+#     entropy_val = 0
+#     for el in assembly:
+#         entropy_val += el[1] * math.log2(el[1])
 
-    entropy_val = -entropy_val
-    return entropy_val
-
-
-def redundancy(assembly, codes):
-    r = calculate_average_code_length(codes) - entropy(assembly)
-    return r
+#     entropy_val = -entropy_val
+#     return entropy_val
 
 
-def kraft_mcmillan_inequality_check(codes):
-    lx = [len(code[1]) for code in codes]
-    kraft_sum = sum(2**(-l) for l in lx)
-    return kraft_sum <= 1, kraft_sum
+# def redundancy(assembly, codes):
+#     r = calculate_average_code_length(codes) - entropy(assembly)
+#     return r
 
 
-def calculate_properties(assembly, codes):
-    avg_code_length = calculate_average_code_length(codes)
-    r = redundancy(assembly, codes)
-    kraft_inequality = kraft_mcmillan_inequality_check(codes)
-    kraft_inequality_string = f"{'Выполняется' if kraft_inequality[0] else 'Не выполняется'}: {
-        kraft_inequality[1]} {'<= 1' if kraft_inequality[0] else '> 1'}"
+# def kraft_mcmillan_inequality_check(codes):
+#     lx = [len(code[1]) for code in codes]
+#     kraft_sum = sum(2**(-l) for l in lx)
+#     return kraft_sum <= 1, kraft_sum
 
-    return avg_code_length, r, kraft_inequality_string
+
+# def calculate_properties(assembly, codes):
+#     avg_code_length = calculate_average_code_length(codes)
+#     r = redundancy(assembly, codes)
+#     kraft_inequality = kraft_mcmillan_inequality_check(codes)
+#     kraft_inequality_string = f"{'Выполняется' if kraft_inequality[0] else 'Не выполняется'}: {
+#         kraft_inequality[1]} {'<= 1' if kraft_inequality[0] else '> 1'}"
+
+#     return avg_code_length, r, kraft_inequality_string
 
 
 def encode(decoded_symbols, codes, with_parity_bit=True):
@@ -95,10 +95,10 @@ def encode(decoded_symbols, codes, with_parity_bit=True):
 
                 encoded_symbols.append(encoded_symbol)
 
-    # with open("output.txt", "w") as writer:
-    #     writer.write("\n".join(encoded_symbols))
+    with open("output.txt", "w") as writer:
+        writer.write("\n".join(encoded_symbols))
 
-    return encoded_symbols
+    # return encoded_symbols
 
 
 def decode(encoded_symbols, codes, with_parity_bit=True):
@@ -137,22 +137,14 @@ def decode(encoded_symbols, codes, with_parity_bit=True):
     with open("output.txt", "w") as writer:
         writer.write("\n".join(decoded_symbols))
 
-    return decoded_symbols
+    # return decoded_symbols
 
 
-alphabet = ['a', 'b', 'c', 'd', 'e', 'f']
-# p = [0.10, 0.20, 0.10, 0.10, 0.35, 0.15]
+def start(alphabet, probabilities, text, mode):
 
-# codes = generate_shannon_codes(alphabet, p)
-# print(codes)
+    codes = generate_shannon_codes(alphabet, probabilities)
 
-
-p = [0.36, 0.18, 0.18, 0.12, 0.09, 0.07]
-
-codes = generate_shannon_codes(alphabet, p)
-# print(codes)
-
-print(codes)
-print("ENCODED: ", encode("abccbadfeedf", codes))
-print("DECODED: ", decode(['000', '0111', '1001', '1001', '0101',
-      '000', '10111', '11101', '11001', '11011', '10111', '11101'], codes))
+    if mode == "E":
+        encode(text, codes)
+    else:
+        decode(text, codes)
