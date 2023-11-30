@@ -1,7 +1,13 @@
 import numpy as np
 
+# Example usage
+G_matrix = np.array([[1, 0, 1, 0, 1, 0], [0, 1, 0, 1, 0, 1]])
+# H_matrix = np.array(sympy.Matrix(G_Matrix).nullspace()) % 2
+H_matrix = np.array([[1, 0, 1, 0, 0, 0], [0, 1, 0, 1, 0, 0], [
+                    1, 0, 0, 0, 1, 0], [0, 1, 0, 0, 0, 1]])
 
-def hamming_encode(message, generator_matrix):
+
+def hamming_encode(message, generator_matrix=G_matrix):
     # Convert the message to a numpy array
     message_array = np.array(message)
 
@@ -15,7 +21,7 @@ def hamming_encode(message, generator_matrix):
     return codeword
 
 
-def hamming_decode(received_codeword, parity_check_matrix):
+def hamming_decode(received_codeword, parity_check_matrix=H_matrix):
     # Convert the received codeword to a numpy array
     received_array = np.array(received_codeword)
 
@@ -43,31 +49,45 @@ def hamming_decode(received_codeword, parity_check_matrix):
     return original_message
 
 
-# Example usage
-G_matrix = np.array([[1, 0, 1, 0, 1, 0], [0, 1, 0, 1, 0, 1]])
-# H_matrix = np.array(sympy.Matrix(G_Matrix).nullspace()) % 2
-H_matrix = np.array([[1, 0, 1, 0, 0, 0], [0, 1, 0, 1, 0, 0], [
-                    1, 0, 0, 0, 1, 0], [0, 1, 0, 0, 0, 1]])
+def start(text, mode):
 
-messages_to_encode = [
-    np.array([1, 1]),
-    np.array([1, 0]),
-    np.array([0, 0]),
-    np.array([0, 1]),
-]
+    result = list()
 
-for i, message in enumerate(messages_to_encode):
-    # Encoding the message
-    encoded_codeword = hamming_encode(message, G_matrix)
-    print(f"Encoded Codeword {i+1}:", encoded_codeword)
+    if mode == "E":
+        for c in text:
+            data = list(map(int, list(c)))
+            result.append(hamming_encode(data))
+    else:
+        for c in text:
+            data = list(map(int, list(c)))
+            result.append(hamming_decode(data))
 
-    # Simulate an error in the received codeword
-    received_codeword_with_error = encoded_codeword.copy()
-    received_codeword_with_error[2] = (
-        received_codeword_with_error[2] + 1) % 2  # introducing an error
+    with open("output.txt", "w") as file:
+        file.write("\n".join(["".join(map(str, code.tolist()))
+                   for code in result]))
 
-    # Decoding the received codeword
-    decoded_message = hamming_decode(received_codeword_with_error, H_matrix)
-    print(f"Original Message {i+1}:", message)
-    print(f"Decoded Message {i+1}:", decoded_message)
-    print()
+    return
+
+
+# messages_to_encode = [
+#     np.array([1, 1]),
+#     np.array([1, 0]),
+#     np.array([0, 0]),
+#     np.array([0, 1]),
+# ]
+
+# for i, message in enumerate(messages_to_encode):
+#     # Encoding the message
+#     encoded_codeword = hamming_encode(message, G_matrix)
+#     print(f"Encoded Codeword {i+1}:", encoded_codeword)
+
+#     # Simulate an error in the received codeword
+#     received_codeword_with_error = encoded_codeword.copy()
+#     received_codeword_with_error[2] = (
+#         received_codeword_with_error[2] + 1) % 2  # introducing an error
+
+#     # Decoding the received codeword
+#     decoded_message = hamming_decode(received_codeword_with_error, H_matrix)
+#     print(f"Original Message {i+1}:", message)
+#     print(f"Decoded Message {i+1}:", decoded_message)
+#     print()
