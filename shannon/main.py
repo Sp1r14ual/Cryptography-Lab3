@@ -17,6 +17,7 @@ def click_button():
     alphabet = None
     probabilities = None
     text = None
+    mode = None
 
     try:
         if not (".txt" in alphabet_filename or ".txt" in probabilities_filename or ".txt" in text_filename):
@@ -34,14 +35,26 @@ def click_button():
             probabilities = tuple(
                 map(float, probabilities_file.read().split()))
             text = tuple(map(str, text_file.read().split()))
+
         except:
             raise ValueError("Некорректные данные")
+
+        mode = cryptMode.get()
+
+        if mode == "E":
+            for c in text:
+                if not (c in alphabet):
+                    raise ValueError("Некорректные входные данные")
+        else:
+            for c in text:
+                for s in c:
+                    if not (s in ('0', '1')):
+                        raise ValueError("Некорректные входные данные")
 
     except Exception as E:
         showerror("Ошибка", str(E))
         return
 
-    mode = cryptMode.get()
     try:
         shannon.start(alphabet, probabilities, text, mode)
     except:
